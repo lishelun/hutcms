@@ -1,0 +1,49 @@
+{
+    "name": "hutcms/hutcms",
+    "description": "基于THINKPHP6的内容管理系统",
+    "type": "project",
+    "keywords": [
+        "hutcms",
+        "thinkphp",
+        "ORM"
+    ],
+    "homepage": "http://hutcms.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "liu21st",
+            "email": "liu21st@gmail.com"
+        },
+        {
+            "name": "yunwuxin",
+            "email": "448901948@qq.com"
+        }        
+    ],
+    "require": {
+        "php": ">=8.1",
+        "topthink/framework": "^6.0.0",
+        "topthink/think-orm": "^2.0",
+        "hutcms/hutphp": "dev-master"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^4.2",
+        "topthink/think-trace":"^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        },
+        "psr-0": {
+            "": "extend/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php think service:discover",
+            "@php think vendor:publish"
+        ]
+    }
+}
