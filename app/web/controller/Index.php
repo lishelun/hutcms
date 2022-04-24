@@ -9,6 +9,6 @@ use hutphp\Controller;
 class Index extends Controller
 {
     public function index(){
-        return 'web xdd'.time();
+        return ''.time();
     }
 }
