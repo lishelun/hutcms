@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare (strict_types = 1);
 
 namespace hutcms\core;
 
@@ -20,8 +20,8 @@ class System extends \hutcms\Core
             return $count;
         } else {
             $this->app->cache->delete('system_config');
-            $map = ['type' => $type , 'name' => $field];
-            $data = array_merge($map , ['value' => $value]);
+            $map   = ['type' => $type , 'name' => $field];
+            $data  = array_merge($map , ['value' => $value]);
             $query = M('system_config')->master(true)->where($map);
             return (clone $query)->count() > 0 ? $query->update($data) : $query->insert($data);
         }
@@ -42,7 +42,7 @@ class System extends \hutcms\Core
         [$type , $field , $outer] = $this->_parse($name);
         if ( empty($name) ) {
             return $this->config;
-        } elseif ( isset($this->config[$type]) ) {
+        } else if ( isset($this->config[$type]) ) {
             $group = $this->config[$type];
             if ( $field ) {
                 $result = $group[$field] ?? $default;
@@ -62,6 +62,7 @@ class System extends \hutcms\Core
 
     /**
      * @param string $item
+     *
      * @return array [type,field,outer]
      */
     private function _parse(string $item): array

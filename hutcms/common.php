@@ -2,19 +2,21 @@
 if ( !function_exists('hut_log') ) {
     /**
      * 写入系统日志
+     *
      * @param string      $type    日志类型
      * @param string|null $content 日志内容
+     *
      * @return mixed
      */
     function hut_log(string $type , ?string $content = null): bool
     {
 
         $log = [
-            'node' => \hutphp\service\NodeService::instance()->getCurrent() ,
-            '$type' => $$type , 'content' => $content ,
-            'ip' => request()->ip() ?: '127.0.0.1' ,
-            'port' => request()->port() ,
-            'username' => \hutphp\service\AdminService::instance()->getUserName() ?: '-' ,
+            'node'      => \hutphp\service\NodeService::instance()->getCurrent() ,
+            '$type'     => $$type , 'content' => $content ,
+            'ip'        => request()->ip() ?: '127.0.0.1' ,
+            'port'      => request()->port() ,
+            'username'  => \hutphp\service\AdminService::instance()->getUserName() ?: '-' ,
             'create_at' => time() ,
         ];
         //to do...
@@ -24,8 +26,10 @@ if ( !function_exists('hut_log') ) {
 if ( !function_exists('hut_var') ) {
     /**
      * 系统变量
+     *
      * @param string      $name
      * @param string|null $value
+     *
      * @return string|array|bool
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -52,7 +56,7 @@ if ( !function_exists('hut_var') ) {
             return hut_var($name);
         } else {
             $query = \think\facade\Db::name('system_var');
-            $save = ['value' => $value];
+            $save  = ['value' => $value];
             if ( $name ) {
                 if ( !$value ) return false;
                 if ( $result = data_save('system_var' , $save , 'id' , ['name' => $name]) ) {
@@ -75,8 +79,10 @@ if ( !function_exists('hut_var') ) {
 if ( !function_exists('hut_conf') ) {
     /**
      * 系统配置
+     *
      * @param string|null $name
      * @param string|null $value
+     *
      * @return string|array|bool
      */
     function hut_conf(string $name = null , ?string $value = null): bool|array|string
@@ -88,11 +94,13 @@ if ( !function_exists('hut_conf') ) {
 if ( !function_exists('hutcms_path') ) {
     /**
      * 获得hutcms目录
+     *
      * @param string $path
+     *
      * @return string
      */
-    function hutcms_path(string $path=''): string
+    function hutcms_path(string $path = ''): string
     {
-        return HUTCMS_PATH. ($path ? ltrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR : $path);
+        return HUTCMS_PATH . ($path ? ltrim($path , DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR : $path);
     }
 }
