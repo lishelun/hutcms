@@ -1,11 +1,10 @@
 <?php
 
-declare (strict_types=1);
+declare (strict_types = 1);
 
 namespace app\web\controller;
 
 use hutphp\Controller;
-use hutphp\helper\TableHelper;
 
 class Test extends Controller
 {
@@ -13,11 +12,14 @@ class Test extends Controller
     {
         return time();
     }
-    public function table(){
-        $res=true;
-//        $table=TableHelper::instance()->setTable(dbtbpre().'tabletest');
-//        $res=$table->addIndex(['tag'],'','fulltext');
 
-        $this->success('test',[$res]);
+    public function table()
+    {
+
+    }
+
+    public function request()
+    {
+        var_dump($this->request->buildToken());
     }
 }
