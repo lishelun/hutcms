@@ -13,6 +13,7 @@ composer create-project hutcms/hutcms hutcms
 ~~~
 composer update hutcms/hutphp
 composer update topthink/framework
+composer dump-autoload -o
 ~~~
 
 ## ThinkPHP文档

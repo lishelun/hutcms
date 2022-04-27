@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3662873bccf9df4cf1a50299233e9fee",
+    "content-hash": "667dae418729a11e056be9716e7a033d",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -75,12 +75,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lishelun/hutphp.git",
-                "reference": "5d63a3a2eff1809f3dc50943f6d259e8fe02df83"
+                "reference": "5f04352e74e7d5fa7f89efb0ea4231104a665575"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lishelun/hutphp/zipball/5d63a3a2eff1809f3dc50943f6d259e8fe02df83",
-                "reference": "5d63a3a2eff1809f3dc50943f6d259e8fe02df83",
+                "url": "https://api.github.com/repos/lishelun/hutphp/zipball/5f04352e74e7d5fa7f89efb0ea4231104a665575",
+                "reference": "5f04352e74e7d5fa7f89efb0ea4231104a665575",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -137,7 +137,7 @@
                 "issues": "https://github.com/lishelun/hutphp/issues",
                 "source": "https://github.com/lishelun/hutphp/tree/master"
             },
-            "time": "2022-04-23T17:51:39+00:00"
+            "time": "2022-04-27T04:57:18+00:00"
         },
         {
             "name": "league/flysystem",
@@ -1783,7 +1783,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1"
+        "php": ">=8.1",
+        "ext-iconv": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

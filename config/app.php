@@ -34,5 +34,6 @@ return [
     'super_username' =>['admin'],
     'super_membername'=>['admin'],
     'auth_app'=>['admin'],
+    'deny_auth_list'=>['admin@user/login','admin@index/test'],
 
 ];
