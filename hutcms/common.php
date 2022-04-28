@@ -10,69 +10,55 @@ if ( !function_exists('hut_log') ) {
      */
     function hut_log(string $type , ?string $content = null): bool
     {
-
         $log = [
-            'node'      => \hutphp\service\NodeService::instance()->getCurrent() ,
-            '$type'     => $$type , 'content' => $content ,
-            'ip'        => request()->ip() ?: '127.0.0.1' ,
-            'port'      => request()->port() ,
-            'username'  => \hutphp\service\AdminService::instance()->getUserName() ?: '-' ,
-            'create_at' => time() ,
+            'type'     => $type ,
+            'node'     => \hutphp\service\NodeService::instance()->getCurrent() ,
+            'content'  => $content ,
+            'ip'       => request()->ip() ?: '127.0.0.1' ,
+            'port'     => request()->remotePort() ,
+            'username' => \hutphp\service\AdminService::instance()->getUserName() ?: '-' ,
+            'user_id'  => \hutphp\service\AdminService::instance()->getUserId() ?: '0' ,
         ];
-        //to do...
-        return false;
+        return M('system_log' , $log)->save();
     }
 }
 if ( !function_exists('hut_var') ) {
     /**
      * 系统变量
      *
-     * @param string      $name
-     * @param string|null $value
+     * @param string      $name 变量名
+     * @param string|null $value 变量值
+     * @param string      $description 变量描述
+     * @param string|null $default  默认值
      *
      * @return string|array|bool
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    function hut_var(string $name = '' , ?string $value = null): string|array|bool
+    function hut_var(string $name = '' , ?string $value = null , string $description = '' , ?string $default = null): mixed
     {
-        static $data = [];
         if ( $value === null ) {
-            if ( $name ) {
-                if ( isset($data[$name]) ) return $data[$name];
-                if ( ($data = cache('hut_var')) && isset($data[$name]) ) return $data[$name];
-            } else {
-                if ( count($data) > 0 ) return $data;
-                if ( $data = cache('hut_var') ) return $data;
-            }
-            $r = \think\facade\Db::name('system_var')->select()->toArray();
-            if ( $r ) foreach ( $r as $item ) {
-                $data[$item['name']] = $item['value'];
-            }
-            if ( $data ) {
-                cache('hut_var' , $data);
-            }
-            return hut_var($name);
+            return \hutcms\core\System::instance()->getVar($name , $default);
         } else {
-            $query = \think\facade\Db::name('system_var');
-            $save  = ['value' => $value];
-            if ( $name ) {
-                if ( !$value ) return false;
-                if ( $result = data_save('system_var' , $save , 'id' , ['name' => $name]) ) {
-                    $data = [];
-                    cache('hut_var' , null);
-                    $r = \think\facade\Db::name('system_var')->select()->toArray();
-                    if ( $r ) foreach ( $r as $item ) {
-                        $data[$item['name']] = $item['value'];
-                    }
-                    if ( $data ) {
-                        cache('hut_var' , $data);
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return \hutcms\core\System::instance()->setVar($name , $value , $description);
+        }
+    }
+}
+if ( !function_exists('hut_data') ) {
+    /**
+     * 系统数据
+     *
+     * @param string     $name        数据名
+     * @param mixed|null $data        数据内容
+     * @param string     $description 数据说明
+     * @param mixed      $default     默认数据
+     *
+     * @return string|array|bool
+     */
+    function hut_data(string $name , string|array $data = null , string $description = '' , mixed $default = ''): string|array|bool
+    {
+        if ( $data == null ) {
+            return \hutcms\core\System::instance()->getData($name , $default);
+        } else {
+            return \hutcms\core\System::instance()->setData($name , $data , $description);
         }
     }
 }
@@ -86,12 +72,12 @@ if ( !function_exists('hut_conf') ) {
      *
      * @return string|array|bool
      */
-    function hut_conf(string|array $name = null , mixed $value = null,string $default=''): bool|array|string
+    function hut_conf(string|array $name = null , mixed $value = null , string $default = ''): bool|array|string
     {
-        if($value===null && is_string($name)){
-            return \hutcms\core\System::instance()->getConfig($name,$default);
-        }else{
-            return \hutcms\core\System::instance()->setConfig($name,$value);
+        if ( $value === null && is_string($name) ) {
+            return \hutcms\core\System::instance()->getConfig($name , $default);
+        } else {
+            return \hutcms\core\System::instance()->setConfig($name , $value);
         }
     }
 }
