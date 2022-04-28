@@ -18,17 +18,12 @@ class Test extends Controller
 
     }
 
-
-    /**
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\DataNotFoundException
-     */
     public function config(): string
     {
-        $result=hut_conf('type2.name2');
+        $result = hut_conf('type2.name2');
         halt($result);
     }
+
     public function request()
     {
         var_dump($this->request->buildToken());
@@ -36,12 +31,13 @@ class Test extends Controller
 
     public function log()
     {
-        dump(hut_log('test','这是一个log测试'));
+        dump(hut_log('test' , '这是一个log测试'));
     }
+
     public function data()
     {
-        $data=[1,2,3,4,2,'554'];
-        dump(hut_data('test2',$data));
+        $data = [1 , 2 , 3 , 4 , 2 , '554'];
+        dump(hut_data('test2' , $data));
         dump(hut_data('test2'));
     }
 }
