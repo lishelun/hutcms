@@ -16,7 +16,6 @@ return [
     'default_app'      => 'web' ,
     // 默认时区
     'default_timezone' => 'Asia/Shanghai' ,
-
     // 应用映射（自动多应用模式有效）
     'app_map'          => [] ,
     // 域名绑定（自动多应用模式有效）
@@ -29,11 +28,21 @@ return [
 
     // 错误显示信息,非调试模式有效
     'error_message'    => '页面错误！请稍后再试～' ,
+    /**
+     * ----------------------------------
+     * hutcms配置
+     * ----------------------------------
+     */
     // 显示错误信息
     'show_error_msg'   => false ,
+    //后台超级用户
     'super_username'   => ['admin'] ,
+    //前台超级用户
     'super_membername' => ['admin'] ,
+    //开启后台验证的app
     'auth_app'         => ['admin'] ,
+    //禁止后台权限验证的控制器
     'deny_auth_list'   => ['admin@user/login' , 'admin@index/test'] ,
-
+    //是否开启模型日志
+    'open_hutcms_model_log'=>false
 ];

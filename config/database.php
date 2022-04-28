@@ -16,7 +16,7 @@ return [
     'datetime_format' => 'Y-m-d H:i:s',
 
     // 时间字段配置 配置格式：create_time,update_time
-    'datetime_field'  => '',
+    'datetime_field'  => 'create_time,update_time',
 
     // 数据库连接配置信息
     'connections'     => [
@@ -53,7 +53,7 @@ return [
             // 是否需要断线重连
             'break_reconnect' => false,
             // 监听SQL
-            'trigger_sql'     => env('app_debug', true),
+            'trigger_sql'     => env('app_debug', false),
             // 开启字段缓存
             'fields_cache'    => false,
         ],

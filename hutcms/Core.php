@@ -23,12 +23,10 @@ class Core
     }
 
 
-    public function instance(...$params)
+    public static function instance(...$params):static
     {
-        Container::getInstance()->make(static::class , $params);
+       return  Container::getInstance()->make(static::class , $params);
     }
-
-
 }
 
 ?>

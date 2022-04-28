@@ -80,15 +80,19 @@ if ( !function_exists('hut_conf') ) {
     /**
      * 系统配置
      *
-     * @param string|null $name
-     * @param string|null $value
+     * @param string|array|null $name
+     * @param mixed|null        $value
+     * @param string            $default
      *
      * @return string|array|bool
      */
-    function hut_conf(string $name = null , ?string $value = null): bool|array|string
+    function hut_conf(string|array $name = null , mixed $value = null,string $default=''): bool|array|string
     {
-
-        return false;
+        if($value===null && is_string($name)){
+            return \hutcms\core\System::instance()->getConfig($name,$default);
+        }else{
+            return \hutcms\core\System::instance()->setConfig($name,$value);
+        }
     }
 }
 if ( !function_exists('hutcms_path') ) {
