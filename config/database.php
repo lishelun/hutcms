@@ -13,7 +13,7 @@ return [
     'auto_timestamp'  => true,
 
     // 时间字段取出后的默认时间格式
-    'datetime_format' => 'Y-m-d H:i:s',
+    'datetime_format' => false,
 
     // 时间字段配置 配置格式：create_time,update_time
     'datetime_field'  => 'create_time,update_time',
@@ -26,11 +26,11 @@ return [
             // 服务器地址
             'hostname'        => env('database.hostname', '127.0.0.1'),
             // 数据库名
-            'database'        => env('database.database', ''),
+            'database'        => env('database.database', 'data_hutcms'),
             // 用户名
-            'username'        => env('database.username', 'root'),
+            'username'        => env('database.username', 'data_hutcms'),
             // 密码
-            'password'        => env('database.password', ''),
+            'password'        => env('database.password', 'ydfdNsZ65a2Tmypi'),
             // 端口
             'hostport'        => env('database.hostport', '3306'),
             // 数据库连接参数

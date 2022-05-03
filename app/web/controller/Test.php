@@ -40,4 +40,12 @@ class Test extends Controller
         dump(hut_data('test2' , $data));
         dump(hut_data('test2'));
     }
+
+    public function createUser()
+    {
+        $password='admin';
+        $salt=random(8,3);
+        $password=create_password($password,$salt);
+        dump($salt,$password);
+    }
 }

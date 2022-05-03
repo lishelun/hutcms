@@ -4,17 +4,17 @@
 // +----------------------------------------------------------------------
 return [
     // cookie 保存时间
-    'expire'    => 0,
+    'expire'    => 86400,
     // cookie 保存路径
     'path'      => '/',
     // cookie 有效域名
-    'domain'    => '',
+    'domain'    => '.'.request()->rootDomain(),
     //  cookie 启用安全传输
-    'secure'    => false,
+    'secure'    => true,
     // httponly设置
     'httponly'  => false,
     // 是否使用 setcookie
     'setcookie' => true,
     // samesite 设置，支持 'strict' 'lax'
-    'samesite'  => '',
+    'samesite'  => 'None',
 ];
