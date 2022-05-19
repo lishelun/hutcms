@@ -31,11 +31,125 @@ class User extends Controller
     }
 
     /**
+     * 退出登陆
+     *
+     * @login true
+     * @return void
+     */
+    public function exit()
+    {
+        AdminService::instance()->clearSession();
+        if ( session('user.id') ) $this->error();
+        $this->success();
+    }
+    /**
+     * 设置用户信息
+     *
+     * @login true
+     * @return void
+     */
+    public function setInfo()
+    {
+        if ( $this->request->isGet() ) {
+            $this->error('post');
+        }
+        $login    = $this->__check();
+        $id       = input('id');
+        $password = input('password');
+        $data     = [];
+        if ( $password ) {
+            $data['salt']     = random(8 , 3);
+            $data['password'] = create_password($password , $data['salt']);
+        }
+        if ( !$id == $login['id'] && AdminService::instance()->isSuper() ) {
+            $this->error(lang('hutcms_not_admin_only_edit_self_user'));
+        }
+
+        try {
+            $this->_form('' , '' , 'id' , [] , $data);
+        } catch (\Exception $exception) {
+            $this->error('' , ['error' => $exception->getMessage()]);
+        }
+    }
+
+    /**
+     * 获取用户信息
+     *
+     * @login true
+     * @return void
+     */
+    public function getInfo()
+    {
+        $login = $this->__check();
+        $id    = input('id');
+        if ( !$id == $login['id'] && AdminService::instance()->isSuper() ) {
+            $this->error(lang('hutcms_not_admin_only_fetch_self_user'));
+        }
+        $data = $this->query()->field('id,username,nickname,phone,email,pic,truename,role_id,status')->findOrEmpty($id);
+        if ( $data->isEmpty() ) $this->error('数据错误');
+        $this->success('ok' , ['data' => $data]);
+    }
+
+    /**
+     * 设置密码
+     *
+     * @login true
+     * @return void
+     */
+    public function setPass()
+    {
+        if ( $this->request->isGet() ) {
+            $this->error('post');
+        }
+        $login = $this->__check();
+        $id    = input('id');
+        if ( !$id == $login['id'] && AdminService::instance()->isSuper() ) {
+            $this->error(lang('hutcms_not_admin_only_edit_self_user'));
+        }
+
+        $do = $this->query()->findOrEmpty($id);
+        $do->isEmpty() && $this->error(lang('hutcms_user_data_error'));
+        $new_password = $this->request->param('new_password/s');
+        $re_password  = $this->request->param('re_password/s');
+
+        if ( !$new_password == $re_password ) $this->error(lang('hutcms_passwords_are_inconsistent'));
+
+        $salt         = random(8 , 3);
+        $md5          = create_password($new_password , $salt);
+        $do->password = $md5;
+        if ( $do->save() ) {
+            $this->success();
+        }
+        $this->error();
+    }
+
+    public function captcha()
+    {
+        $out = base64_encode(captcha()->getContent());
+        $this->success('ok' , ['data' => ['captcha' => "data:image/png;base64,{$out}"]]);
+    }
+    /**
+     * 检查登陆
+     *
+     * @login true
+     * @return bool|array
+     */
+    private function __check(): bool|array
+    {
+        $user = JWTHelper::instance()->checkLogin();
+        if ( is_array($user) && !empty($user) ) {
+            return $user;
+        } else {
+            $this->error(lang('hutphp_not_login') , [] , 4001);
+            return false;
+        }
+    }
+    /**
      * 使用用户名密码登陆
      *
      * @return void
      */
-    public function __loginFromPass()
+    private function __loginFromPass()
     {
         $username = $this->request->param('username/s' , '');
         $password = $this->request->param('password/s' , '');
@@ -63,7 +177,7 @@ class User extends Controller
      *
      * @return void
      */
-    public function __loginFromPhone()
+    private function __loginFromPhone()
     {
         $phone_code = $this->request->param('code/s' , '');
         $phone      = $this->request->param('phone/s' , '');
@@ -78,19 +192,6 @@ class User extends Controller
         $user = $this->query()->findOrEmpty($sms['user_id']);
         if ( $user->isEmpty() ) $this->error(lang('hutcms_phone_error'));
         $this->__globalLogin($user);
-    }
-
-    /**
-     * 退出登陆
-     *
-     * @login true
-     * @return void
-     */
-    public function exit()
-    {
-        AdminService::instance()->clearSession();
-        if ( session('user.id') ) $this->error();
-        $this->success();
     }
 
     /**
@@ -114,7 +215,7 @@ class User extends Controller
             'nickname' => $user['nickname'] ,
             'role_id'  => $user['role_id'] ,
         ];
-        $expire_time = $user['expire_time']?:(int)hut_conf('user.user_login_expired_time' , null , '3600');
+        $expire_time = $user['expire_time'] ?: (int)hut_conf('user.user_login_expired_time' , null , '3600');
         $token       = JWTHelper::instance()->encode($token_data , $expire_time);
 
         //更新用户信息
@@ -141,107 +242,4 @@ class User extends Controller
         $this->success(lang('hutcms_login_success') , ['data' => $token_data]);
     }
 
-    /**
-     * 设置用户信息
-     *
-     * @login true
-     * @return void
-     */
-    public function setInfo()
-    {
-        if ( $this->request->isGet() ) {
-            $this->error('post');
-        }
-        $login    = $this->check();
-        $id       = input('id');
-        $password = input('password');
-        $data     = [];
-        if ( $password ) {
-            $data['salt']     = random(8 , 3);
-            $data['password'] = create_password($password , $data['salt']);
-        }
-        if ( !$id == $login['id'] && AdminService::instance()->isSuper() ) {
-            $this->error(lang('hutcms_not_admin_only_edit_self_user'));
-        }
-
-        try {
-            $this->_form('' , '' , 'id' , [] , $data);
-        } catch (\Exception $exception) {
-            $this->error('' , ['error' => $exception->getMessage()]);
-        }
-    }
-
-    /**
-     * 获取用户信息
-     *
-     * @login true
-     * @return void
-     */
-    public function getInfo()
-    {
-        $login = $this->check();
-        $id    = input('id');
-        if ( !$id == $login['id'] && AdminService::instance()->isSuper() ) {
-            $this->error(lang('hutcms_not_admin_only_fetch_self_user'));
-        }
-        $data = $this->query()->field('id,username,nickname,phone,email,pic,truename,role_id,status')->findOrEmpty($id);
-        if ( $data->isEmpty() ) $this->error('数据错误');
-        $this->success('ok' , ['data' => $data]);
-    }
-
-    /**
-     * 设置密码
-     *
-     * @login true
-     * @return void
-     */
-    public function setPass()
-    {
-        if ( $this->request->isGet() ) {
-            $this->error('post');
-        }
-        $login = $this->check();
-        $id    = input('id');
-        if ( !$id == $login['id'] && AdminService::instance()->isSuper() ) {
-            $this->error(lang('hutcms_not_admin_only_edit_self_user'));
-        }
-
-        $do = $this->query()->findOrEmpty($id);
-        $do->isEmpty() && $this->error(lang('hutcms_user_data_error'));
-        $new_password = $this->request->param('new_password/s');
-        $re_password  = $this->request->param('re_password/s');
-
-        if ( !$new_password == $re_password ) $this->error(lang('hutcms_passwords_are_inconsistent'));
-
-        $salt         = random(8 , 3);
-        $md5          = create_password($new_password , $salt);
-        $do->password = $md5;
-        if ( $do->save() ) {
-            $this->success();
-        }
-        $this->error();
-    }
-
-    /**
-     * 检查登陆
-     *
-     * @login true
-     * @return bool|array
-     */
-    private function check(): bool|array
-    {
-        $user = JWTHelper::instance()->checkLogin();
-        if ( is_array($user) && !empty($user) ) {
-            return $user;
-        } else {
-            $this->error(lang('hutphp_not_login') , [] , 4001);
-            return false;
-        }
-    }
-
-    public function captcha()
-    {
-        $out = base64_encode(captcha()->getContent());
-        $this->success('ok' , ['data' => ['captcha' => "data:image/png;base64,{$out}"]]);
-    }
 }
