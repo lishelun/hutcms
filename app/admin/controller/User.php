@@ -24,9 +24,9 @@ class User extends Controller
     {
         $login_type = $this->request->param('login_type/s' , '');
         if ( $login_type == 'phone' ) {
-            $this->loginFromPhone();
+            $this->__loginFromPhone();
         } else {
-            $this->loginFromPass();
+            $this->__loginFromPass();
         }
     }
 
@@ -35,7 +35,7 @@ class User extends Controller
      *
      * @return void
      */
-    public function loginFromPass()
+    public function __loginFromPass()
     {
         $username = $this->request->param('username/s' , '');
         $password = $this->request->param('password/s' , '');
@@ -55,7 +55,7 @@ class User extends Controller
         $md5_password = create_password($password , $user['salt']);
         if ( $md5_password != $user['password'] ) $this->error(lang('hutcms_password_error'));
 
-        $this->globalLogin($user);
+        $this->__globalLogin($user);
     }
 
     /**
@@ -63,7 +63,7 @@ class User extends Controller
      *
      * @return void
      */
-    public function loginFromPhone()
+    public function __loginFromPhone()
     {
         $phone_code = $this->request->param('code/s' , '');
         $phone      = $this->request->param('phone/s' , '');
@@ -77,7 +77,7 @@ class User extends Controller
 
         $user = $this->query()->findOrEmpty($sms['user_id']);
         if ( $user->isEmpty() ) $this->error(lang('hutcms_phone_error'));
-        $this->globalLogin($user);
+        $this->__globalLogin($user);
     }
 
     /**
@@ -100,7 +100,7 @@ class User extends Controller
      *
      * @return void
      */
-    private function globalLogin($user)
+    private function __globalLogin($user)
     {
         if ( $user['status'] <> 1 ) $this->error(lang('hutcms_user_status_deny'));
         $role = $this->query('system_role')->where('id' , $user['role_id'])->findOrEmpty();
@@ -114,8 +114,8 @@ class User extends Controller
             'nickname' => $user['nickname'] ,
             'role_id'  => $user['role_id'] ,
         ];
-        $empire_time = (int)hut_conf('user.user_login_expired_time' , null , '86400');
-        $token       = JWTHelper::instance()->encode($token_data , $empire_time);
+        $expire_time = $user['expire_time']?:(int)hut_conf('user.user_login_expired_time' , null , '3600');
+        $token       = JWTHelper::instance()->encode($token_data , $expire_time);
 
         //更新用户信息
         $user['token']      = $token;
@@ -132,7 +132,7 @@ class User extends Controller
         //额外返回前台信息
         $token_data['pic']         = $user['pic'];
         $token_data['token']       = $token;
-        $token_data['empire_time'] = $empire_time + time();
+        $token_data['expire_time'] = $expire_time + time();
         $token_data['auth']        = $role['auth'];
         $token_data['rolename']    = $role['name'];
 
