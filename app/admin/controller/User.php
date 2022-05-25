@@ -20,7 +20,7 @@ class User extends Controller
      *
      * @return void
      */
-    public function login()
+    public function login(): void
     {
         $login_type = $this->request->param('login_type/s' , '');
         if ( $login_type == 'phone' ) {
@@ -36,7 +36,7 @@ class User extends Controller
      * @login true
      * @return void
      */
-    public function exit()
+    public function exit(): void
     {
         AdminService::instance()->clearSession();
         if ( session('user.id') ) $this->error();
@@ -48,7 +48,7 @@ class User extends Controller
      * @login true
      * @return void
      */
-    public function setInfo()
+    public function setInfo(): void
     {
         if ( $this->request->isGet() ) {
             $this->error('post');
@@ -78,7 +78,7 @@ class User extends Controller
      * @login true
      * @return void
      */
-    public function getInfo()
+    public function getInfo(): void
     {
         $login = $this->__check();
         $id    = input('id');
@@ -96,7 +96,7 @@ class User extends Controller
      * @login true
      * @return void
      */
-    public function setPass()
+    public function setPass(): void
     {
         if ( $this->request->isGet() ) {
             $this->error('post');
@@ -149,7 +149,7 @@ class User extends Controller
      *
      * @return void
      */
-    private function __loginFromPass()
+    private function __loginFromPass(): void
     {
         $username = $this->request->param('username/s' , '');
         $password = $this->request->param('password/s' , '');
@@ -177,7 +177,7 @@ class User extends Controller
      *
      * @return void
      */
-    private function __loginFromPhone()
+    private function __loginFromPhone(): void
     {
         $phone_code = $this->request->param('code/s' , '');
         $phone      = $this->request->param('phone/s' , '');
@@ -201,7 +201,7 @@ class User extends Controller
      *
      * @return void
      */
-    private function __globalLogin($user)
+    private function __globalLogin($user): void
     {
         if ( $user['status'] <> 1 ) $this->error(lang('hutcms_user_status_deny'));
         $role = $this->query('system_role')->where('id' , $user['role_id'])->findOrEmpty();
@@ -217,7 +217,6 @@ class User extends Controller
         ];
         $expire_time = $user['expire_time'] ?: (int)hut_conf('user.user_login_expired_time' , null , '3600');
         $token       = JWTHelper::instance()->encode($token_data , $expire_time);
-
         //更新用户信息
         $user['token']      = $token;
         $user['login_time'] = time();
