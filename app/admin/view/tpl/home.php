@@ -178,27 +178,28 @@
         </div>
 
         <div class="layui-col-md4">
-
+        <script type="text/html" template lay-url="./user/loginInfo" >
             <div class="layui-card">
                 <div class="layui-card-header">用户信息 <span class="hutcms-card-header-right">登陆次数：<em
-                                class="login-num">0</em>次</span></div>
+                                class="login-num">{{ d.data.login_num }}</em>次</span></div>
                 <div class="layui-card-body">
                     <div class="hutcms-console-user">
                         <div class="hutcms-console-user-top">
                             <i class="layui-icon layui-icon-user"></i>
                             <div class="hutcms-console-user-right-text">
-                                <div class="username login-username">--</div>
-                                <div class="groupname login-groupname">--</div>
+                                <div class="username login-username">{{ d.data.username }}</div>
+                                <div class="groupname login-groupname">{{ d.data.rolename }}</div>
                             </div>
                         </div>
 
-                        <p>上次登陆：<span class="font-item login-last-time">--</span></p>
-                        <p>上次登陆IP：<span class="font-item login-last-ip">--</span></p>
-                        <p>本次登陆IP：<span class="font-item login-ip">--</span></p>
+                        <p>上次登陆：<span class="font-item login-last-time">{{ d.data.last_login_time }}</span></p>
+                        <p>上次登陆IP：<span class="font-item login-last-ip">{{ d.data.last_login_ip }}</span></p>
+                        <p>本次登陆IP：<span class="font-item login-ip">{{ d.data.login_ip }}</span></p>
                     </div>
                 </div>
 
             </div>
+        </script>
 
             <div class="layui-card">
                 <div class="layui-card-header">网站环境</div>
@@ -234,10 +235,10 @@
                             <td>当前版本</td>
                             <td>
                                 {$version}
-                                <a href="https://www.hutcms.com/version/info?v={$version}" target="_blank"
-                                   style="padding-left: 10px;">更新日志</a>
                                 <a href="https://www.hutcms.com/version/check?v={$version}" layadmin-event="update"
                                    data-version="{$version}" style="padding-left: 5px;">检查更新</a>
+                                <a href="https://www.hutcms.com/version/info?v={$version}" target="_blank"
+                                   style="padding-left: 10px;">更新日志</a>
                             </td>
                         </tr>
                         <tr>

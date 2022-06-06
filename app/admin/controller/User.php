@@ -265,6 +265,7 @@ class User extends Controller
             'username' => $user['username'] ,
             'nickname' => $user['nickname'] ,
             'role_id'  => $user['role_id'] ,
+            'rolename' => $role['name']
         ];
         $expire_time = $user['expire_time'] ?: (int)hut_conf('user.user_login_expired_time' , null , '3600');
         $token       = JWTHelper::instance()->encode($token_data , $expire_time);
@@ -289,20 +290,45 @@ class User extends Controller
 
         //设置sessions
         AdminService::instance()->setSession($token_data);
-        $this->__log(1 , array_merge($token_data , ['ip' => $user['login_ip'] , 'port' => $user['login_port'] , 'login_time' => $user['login_time']]));
+        $this->__log(1 , array_merge($token_data , ['login_ip' => $user['login_ip'] , 'login_port' => $user['login_port'] , 'login_time' => $user['login_time']]));
         $this->success(lang('hutcms_login_success') , ['data' => $token_data]);
     }
 
     public function session()
     {
-        $user         = $this->__check();
-        $data         = $this->query()->field('id,username,nickname,phone,email,pic,truename,role_id,status')->findOrEmpty($user['id']);
-        $role         = $this->query("system_role")->field('id,name,status')->find($data['role_id']);
-        $data['role'] = $role;
-        if ( $data->isEmpty() ) {
-            $this->error('数据错误' , [] , 4001);
-        }
+        $data = $this->__check();
         $this->success('ok' , ['data' => $data]);
+    }
+
+    /**
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\DataNotFoundException
+     */
+    public function loginInfo()
+    {
+        $user = $this->__check();
+        $last = $this->query('system_user_log')
+                     ->where('user_id' , $user['id'])
+                     ->where('status' , 1)
+                     ->order('create_at' , 'desc')->limit(2)->select();
+
+        $num=$this->query('system_user')->where('id' , $user['id'])->column('login_num');
+        $data = [];
+
+        $data['login_ip']        = $last[0]['ip'] ?? '-';
+        $data['login_time']      = $last[0]['create_at'] ?? '-';
+        $data['login_num']       = $num ?: '0';
+        $data['username']        = $user['username'] ?? '-';
+        $data['last_login_ip']   = $last[1]['ip'] ?? '-';
+        $data['last_login_time'] = $last[1]['create_at'] ?? '-';
+
+        $data['role_id'] = $user['role_id']??'-';
+        $data['rolename'] = $user['rolename']??'-';
+
+
+        $this->success('ok' , ['data' => $data]);
+
     }
 
     private function __log($status , $add = []): void
@@ -310,18 +336,17 @@ class User extends Controller
         $data            = [];
         $data['status']  = $status;
         $data['user_id'] = 0;
+        $data['username'] = $add['username'];
         if ( $status == 1 ) {
             $data['user_id']  = $add['id'];
             $data['pass']     = 'success';
             $data['ip']       = $add['login_ip'];
             $data['port']     = $add['login_port'];
-            $data['username'] = $add['username'];
         }
         else {
             $data['pass']     = $add['password'];
             $data['ip']       = $this->request->ip();
             $data['port']     = $this->request->remotePort();
-            $data['username'] = $add['username'];
         }
         $this->query('system_user_log')->insertGetId($data);
     }

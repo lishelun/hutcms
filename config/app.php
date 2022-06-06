@@ -54,7 +54,7 @@ return [
     //开启后台验证的app
     'auth_app'              => ['admin'] ,
     //禁止后台权限验证的控制器
-    'deny_auth_list'        => ['admin@user/login' , 'admin@user/exit' , 'admin@index/index','admin@user/captcha'] ,
+    'deny_auth_list'        => ['admin@user/login' , 'admin@user/exit' , 'admin@index/index','admin@user/captcha','admin@ServerStatus/get'] ,
     //是否开启模型日志
     'open_hutcms_model_log' => false,
     // CORS 自动配置跨域

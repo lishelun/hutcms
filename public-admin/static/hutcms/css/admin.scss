@@ -341,7 +341,7 @@ html.dark {
 }
 
 .font-item {
-  color: #009688;
+  color: var(--el-color-primary);
 }
 
 .font-bold {
@@ -518,4 +518,7 @@ html.dark {
 
 .layui-card {
   border-radius: 4px;
+}
+.layadmin-backlog-body p cite {
+  color: var(--el-color-primary);
 }

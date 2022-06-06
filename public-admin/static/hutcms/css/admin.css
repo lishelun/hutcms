@@ -293,7 +293,7 @@ html.dark {
   color: #1E9FFF; }
 
 .font-item {
-  color: #009688; }
+  color: var(--el-color-primary); }
 
 .font-bold {
   font-weight: 600; }
@@ -416,5 +416,8 @@ html.dark {
 
 .layui-card {
   border-radius: 4px; }
+
+.layadmin-backlog-body p cite {
+  color: var(--el-color-primary); }
 
 /*# sourceMappingURL=admin.css.map */
