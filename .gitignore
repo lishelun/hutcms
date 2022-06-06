@@ -1,6 +1,7 @@
-/.idea
-/.vscode
-/vendor
-/public/.well-known
+/.idea/
+/.vscode/
+/vendor/
+/public/.well-known/
+/**/.sass-cache/
 *.log
-.env
+*.env
