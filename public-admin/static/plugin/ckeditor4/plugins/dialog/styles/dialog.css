@@ -1,0 +1,30 @@
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
+
+.cke_dialog_open {
+	overflow: hidden;
+}
+
+.cke_dialog_container {
+	position: fixed;
+	overflow-y: auto;
+	overflow-x: auto;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 10010;
+}
+
+.cke_dialog_body {
+	position: relative;
+}

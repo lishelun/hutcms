@@ -1,12 +1,24 @@
 <?php
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
 
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace app\admin\controller;
 
 use hutphp\Controller;
 use hutphp\helper\JWTHelper;
 use hutphp\service\AdminService;
+use think\db\exception\DbException;
 
 /**
  * 用户
@@ -17,34 +29,39 @@ class User extends Controller
 
     /**
      * 用户登陆
-     *
      * @return void
      */
     public function login(): void
     {
+        if ( $this->request->isGet() ) {
+            $this->fetch();
+        }
+
         $login_type = $this->request->param('login_type/s' , '');
         if ( $login_type == 'phone' ) {
             $this->__loginFromPhone();
-        } else {
+        }
+        else {
             $this->__loginFromPass();
         }
     }
 
     /**
      * 退出登陆
-     *
      * @login true
      * @return void
      */
     public function exit(): void
     {
         AdminService::instance()->clearSession();
-        if ( session('user.id') ) $this->error();
+        if ( session('user.id') ) {
+            $this->error();
+        }
         $this->success();
     }
+
     /**
      * 设置用户信息
-     *
      * @login true
      * @return void
      */
@@ -74,7 +91,6 @@ class User extends Controller
 
     /**
      * 获取用户信息
-     *
      * @login true
      * @return void
      */
@@ -86,13 +102,14 @@ class User extends Controller
             $this->error(lang('hutcms_not_admin_only_fetch_self_user'));
         }
         $data = $this->query()->field('id,username,nickname,phone,email,pic,truename,role_id,status')->findOrEmpty($id);
-        if ( $data->isEmpty() ) $this->error('数据错误');
+        if ( $data->isEmpty() ) {
+            $this->error('数据错误');
+        }
         $this->success('ok' , ['data' => $data]);
     }
 
     /**
      * 设置密码
-     *
      * @login true
      * @return void
      */
@@ -112,7 +129,9 @@ class User extends Controller
         $new_password = $this->request->param('new_password/s');
         $re_password  = $this->request->param('re_password/s');
 
-        if ( !$new_password == $re_password ) $this->error(lang('hutcms_passwords_are_inconsistent'));
+        if ( !$new_password == $re_password ) {
+            $this->error(lang('hutcms_passwords_are_inconsistent'));
+        }
 
         $salt         = random(8 , 3);
         $md5          = create_password($new_password , $salt);
@@ -128,9 +147,9 @@ class User extends Controller
         $out = base64_encode(captcha()->getContent());
         $this->success('ok' , ['data' => ['captcha' => "data:image/png;base64,{$out}"]]);
     }
+
     /**
      * 检查登陆
-     *
      * @login true
      * @return bool|array
      */
@@ -139,14 +158,15 @@ class User extends Controller
         $user = JWTHelper::instance()->checkLogin();
         if ( is_array($user) && !empty($user) ) {
             return $user;
-        } else {
+        }
+        else {
             $this->error(lang('hutphp_not_login') , [] , 4001);
             return false;
         }
     }
+
     /**
      * 使用用户名密码登陆
-     *
      * @return void
      */
     private function __loginFromPass(): void
@@ -155,26 +175,43 @@ class User extends Controller
         $password = $this->request->param('password/s' , '');
         $captcha  = $this->request->param('captcha/s' , '');
 
-        if ( empty($username) ) $this->error(lang('hutcms_input_username'));
-        if ( empty($password) ) $this->error(lang('hutcms_input_password'));
-        if ( empty($captcha) ) $this->error(lang('hutcms_input_captcha'));
+        if ( empty($username) ) {
+            $this->error(lang('hutcms_input_username'));
+        }
+        if ( empty($password) ) {
+            $this->error(lang('hutcms_input_password'));
+        }
+        if ( empty($captcha) ) {
+            $this->error(lang('hutcms_input_captcha'));
+        }
+        $ip    = $this->request->ip();
+        $check = $this->query("system_user_log")->where("ip" , $ip)->where("status" , 2)->whereDay('create_at')->count();
+        if ( $check >= (int)hut_conf('user.login_max_num' , null , '5') ) {
+            $this->error(lang('hutcms_login_num_out'));
+        }
 
         //检查验证码
-        if ( !captcha_check($captcha) ) $this->error(lang('hutcms_captcha_error'));
+        if ( !captcha_check($captcha) ) {
+            $this->error(lang('hutcms_captcha_error'));
+        }
         //检查用户名和密码
-        $user = $this->query()->where('username' , $username)->findOrEmpty();
-        if ( $user->isEmpty() ) $this->error(lang('hutcms_username_error'));
+        $user = $this->query()->where('username' , '=' , $username)->whereOr('phone' , '=' , $username)->fetchSql(false)->findOrEmpty();
+        if ( $user->isEmpty() ) {
+            $this->error(lang('hutcms_username_error'));
+        }
 
 
         $md5_password = create_password($password , $user['salt']);
-        if ( $md5_password != $user['password'] ) $this->error(lang('hutcms_password_error'));
+        if ( $md5_password != $user['password'] ) {
+            $this->__log(2 , ['username' => $username , 'password' => $password]);
+            $this->error(lang('hutcms_password_error'));
+        }
 
         $this->__globalLogin($user);
     }
 
     /**
      * 使用手机验证码登陆
-     *
      * @return void
      */
     private function __loginFromPhone(): void
@@ -182,31 +219,45 @@ class User extends Controller
         $phone_code = $this->request->param('code/s' , '');
         $phone      = $this->request->param('phone/s' , '');
 
-        if ( !$phone ) $this->error(lang('hutcms_input_phone'));
-        if ( !$phone_code ) $this->error(lang('hutcms_input_phone_code'));
+        if ( !$phone ) {
+            $this->error(lang('hutcms_input_phone'));
+        }
+        if ( !$phone_code ) {
+            $this->error(lang('hutcms_input_phone_code'));
+        }
 
         $sms = $this->query('system_user_sms')->where('phone' , $phone)->order('create_time' , 'desc')->limit(1)->findOrEmpty();
-        if ( $sms->isEmpty() ) $this->error(lang('hutcms_need_send_phone_code'));
-        if ( $sms->code != $phone_code ) $this->error(lang('hutcms_phone_code_error'));
+        if ( $sms->isEmpty() ) {
+            $this->error(lang('hutcms_need_send_phone_code'));
+        }
+        if ( $sms->code != $phone_code ) {
+            $this->error(lang('hutcms_phone_code_error'));
+        }
 
         $user = $this->query()->findOrEmpty($sms['user_id']);
-        if ( $user->isEmpty() ) $this->error(lang('hutcms_phone_error'));
+        if ( $user->isEmpty() ) {
+            $this->error(lang('hutcms_phone_error'));
+        }
         $this->__globalLogin($user);
     }
 
     /**
      * 登陆公共部分
-     *
      * @param $user
-     *
      * @return void
      */
     private function __globalLogin($user): void
     {
-        if ( $user['status'] <> 1 ) $this->error(lang('hutcms_user_status_deny'));
+        if ( $user['status'] <> 1 ) {
+            $this->error(lang('hutcms_user_status_deny'));
+        }
         $role = $this->query('system_role')->where('id' , $user['role_id'])->findOrEmpty();
-        if ( $role->isEmpty() ) $this->error(lang('hutcms_role_data_error'));
-        if ( $role['status'] <> 1 ) $this->error(lang('hutcms_role_status_deny'));
+        if ( $role->isEmpty() ) {
+            $this->error(lang('hutcms_role_data_error'));
+        }
+        if ( $role['status'] <> 1 ) {
+            $this->error(lang('hutcms_role_status_deny'));
+        }
 
         //jwt用户信息
         $token_data  = [
@@ -238,7 +289,40 @@ class User extends Controller
 
         //设置sessions
         AdminService::instance()->setSession($token_data);
+        $this->__log(1 , array_merge($token_data , ['ip' => $user['login_ip'] , 'port' => $user['login_port'] , 'login_time' => $user['login_time']]));
         $this->success(lang('hutcms_login_success') , ['data' => $token_data]);
     }
 
+    public function session()
+    {
+        $user         = $this->__check();
+        $data         = $this->query()->field('id,username,nickname,phone,email,pic,truename,role_id,status')->findOrEmpty($user['id']);
+        $role         = $this->query("system_role")->field('id,name,status')->find($data['role_id']);
+        $data['role'] = $role;
+        if ( $data->isEmpty() ) {
+            $this->error('数据错误' , [] , 4001);
+        }
+        $this->success('ok' , ['data' => $data]);
+    }
+
+    private function __log($status , $add = []): void
+    {
+        $data            = [];
+        $data['status']  = $status;
+        $data['user_id'] = 0;
+        if ( $status == 1 ) {
+            $data['user_id']  = $add['id'];
+            $data['pass']     = 'success';
+            $data['ip']       = $add['login_ip'];
+            $data['port']     = $add['login_port'];
+            $data['username'] = $add['username'];
+        }
+        else {
+            $data['pass']     = $add['password'];
+            $data['ip']       = $this->request->ip();
+            $data['port']     = $this->request->remotePort();
+            $data['username'] = $add['username'];
+        }
+        $this->query('system_user_log')->insertGetId($data);
+    }
 }

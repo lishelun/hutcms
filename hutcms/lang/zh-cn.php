@@ -1,4 +1,16 @@
 <?php
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
+
 return [
     'hutcms_input_password'                 => '请输入密码' ,
     'hutcms_input_username'                 => '请输入用户名' ,
@@ -21,4 +33,5 @@ return [
     'hutcms_not_admin_only_fetch_self_user' => '非管理员只能查看当前帐户' ,
     'hutcms_data_error'                     => '数据错误' ,
     'hutcms_passwords_are_inconsistent'     => '两次密码不一致' ,
+    'hutcms_login_num_out'                  => '错误次数太多,请稍后重试' ,
 ];

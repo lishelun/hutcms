@@ -1,4 +1,16 @@
 <?php
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
+
 return [
     'hutcms_input_password'                 => 'Please enter your password' ,
     'hutcms_input_username'                 => 'Please enter your account' ,
@@ -21,4 +33,5 @@ return [
     'hutcms_not_admin_only_fetch_self_user' => 'Non-administrators can view only current users' ,
     'hutcms_data_error'                     => 'Data error' ,
     'hutcms_passwords_are_inconsistent'     => 'The passwords are inconsistent' ,
+    'hutcms_login_num_out'                  => 'Too many errors. Please try again later' ,
 ];

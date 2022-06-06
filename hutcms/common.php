@@ -1,4 +1,16 @@
 <?php
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
+
 if ( !function_exists('hut_log') ) {
     /**
      * 写入系统日志
@@ -92,5 +104,12 @@ if ( !function_exists('hutcms_path') ) {
     function hutcms_path(string $path = ''): string
     {
         return HUTCMS_PATH . ($path ? ltrim($path , DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR : $path);
+    }
+}
+function plugin($name,...$params){
+    try {
+        return \hutcms\Plugin::make($name , $params);
+    } catch (Exception $e) {
+        abort(500,$e->getMessage());
     }
 }

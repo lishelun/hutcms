@@ -1,4 +1,16 @@
 <?php
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
+
 // +----------------------------------------------------------------------
 // | 应用设置
 // +----------------------------------------------------------------------
@@ -24,7 +36,7 @@ return [
     'deny_app_list'         => [] ,
 
     // 异常页面的模板文件
-    'exception_tmpl'        => app()->getThinkPath() . 'tpl/think_exception.tpl' ,
+    'exception_tmpl'        => root_path(). 'hutcms/view/hutcms_exception.php' ,
 
     // 错误显示信息,非调试模式有效
     'error_message'         => '页面错误！请稍后再试～' ,
@@ -55,4 +67,5 @@ return [
     'cors_headers'            => 'Api-Name,Api-Type,Api-Token,User-Form-Token,User-Token,Token,Lang,Access-Token',
     //JWT 密匙
     'JWT_secret'=>'2nUS[1-TH^mL{dW3N>ZAfaJ:z&4l+jsXoCy@h0PI~',
+    'user_check_header'=>"Authorization"
 ];

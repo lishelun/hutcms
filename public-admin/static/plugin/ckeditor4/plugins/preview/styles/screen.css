@@ -1,0 +1,22 @@
+/*
+ *  +----------------------------------------------------------------------
+ *  | HUTCMS
+ *  +----------------------------------------------------------------------
+ *  | Copyright (c) 2022 http://hutcms.com All rights reserved.
+ *  +----------------------------------------------------------------------
+ *  | Licensed ( https://mit-license.org )
+ *  +----------------------------------------------------------------------
+ *  | Author: lishelun <lishelun@qq.com>
+ *  +----------------------------------------------------------------------
+ */
+
+div[style*="page-break-after"] {
+	background:url( ../images/pagebreak.gif ) no-repeat center center;
+	clear:both;
+	width:100%;
+	border-top:#999 1px dotted;
+	border-bottom:#999 1px dotted;
+	padding:0;
+	height:7px;
+	cursor:default;
+}
